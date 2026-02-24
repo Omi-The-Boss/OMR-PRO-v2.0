@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>OMR PRO · result compact</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
+        * { -webkit-tap-highlight-color: transparent; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f8fafc; margin: 0; transition: background-color 0.3s ease; }
+        
+        /* Dark mode base */
+        .dark body { background: #0f172a; color: #e2e8f0; }
+        
+        /* Dark mode common elements */
+        .dark .bg-white, .dark #config-card, .dark #timer-card, .dark .omr-sheet,
+        .dark #custom-exam-modal, .dark #manage-custom-modal, .dark #finish-confirm,
+        .dark #bottom-sheet-panel, .dark .stat-item, .dark .time-panel-compact,
+        .dark .progress-mini, .dark .breakdown-compact, .dark .custom-exam-item,
+        .dark #exam-select-trigger, .dark .sheet-option, .dark .result-card-compact {
+            background: #1e293b !important;
+            border-color: #334155 !important;
+            color: #f1f5f9;
+        }
+        
+        /* OMR Sheet header fix - Dark Mode */
+        .dark #sheet-title {
+            color: #f1f5f9 !important;
+        }
+        
+        /* Result card specific dark mode fixes */
+        .dark .result-card-compact .score-hero-compact {
+            background: #0f172a !important;
+            border-color: #ec4899 !important;
+        }
+        .dark .result-card-compact .stat-item {
+            background: #0f172a !important;
+        }
+        .dark .result-card-compact .total-large {
+            background: linear-gradient(145deg, #f1f5f9, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .dark .result-card-compact .stat-num {
+            color: #ffffff !important;
+        }
+        .dark .result-card-compact .stat-label-small {
+            color: #94a3b8 !important;
+        }
+        .dark .result-card-compact .text-emerald-700 {
+            color: #6ee7b7 !important;
+        }
+        .dark .result-card-compact .text-red-600 {
+            color: #fca5a5 !important;
+        }
+        .dark .result-card-compact .text-slate-600 {
+            color: #cbd5e1 !important;
+        }
+        .dark .result-card-compact .progress-header {
+            color: #cbd5e1 !important;
+        }
+        .dark .result-card-compact .time-row-compact span {
+            color: #cbd5e1 !important;
+        }
+        .dark .result-card-compact .time-row-compact .font-black {
+            color: #f1f5f9 !important;
+        }
+        
+        /* Total Ans box fix - Dark Mode */
+        .dark .bd-number {
+            color: #ffffff !important;
+        }
+        .dark .bd-number.rose {
+            color: #f87171 !important; /* Brighter red for better visibility */
+        }
+        .dark .bd-number.indigo {
+            color: #a5b4fc !important;
+        }
+        
+        /* Overtime text color fix - Keep red in dark mode */
+        .dark .overtime-text-red,
+        .dark .time-row-compact .overtime-text-red,
+        .dark #res-overtime,
+        .dark .text-red-600.overtime-text-red {
+            color: #ef4444 !important; /* Bright red color */
+        }
+        
+        /* Timer label overtime fix */
+        .dark #timer-label.text-red-600 {
+            color: #ef4444 !important;
+        }
+        
+        /* Input fields dark mode */
+        .dark input[type="number"], .dark input[type="text"], .dark .custom-input {
+            background: #0f172a !important;
+            border-color: #475569 !important;
+            color: #f1f5f9 !important;
+        }
+        .dark input::placeholder { color: #94a3b8 !important; }
+        
+        /* MCQ From/To boxes fix */
+        .dark .bg-gray-50 {
+            background: #0f172a !important;
+        }
+        .dark .bg-gray-50 input {
+            background: #0f172a !important;
+            color: #f1f5f9 !important;
+            border-color: #475569 !important;
+        }
+        
+        /* Preview box fix */
+        .dark #exam-preview {
+            background: #1e293b !important;
+            border-color: #ec4899 !important;
+        }
+        .dark #exam-preview .text-pink-500,
+        .dark #exam-preview .text-pink-600,
+        .dark #exam-preview .text-pink-700 {
+            color: #f9a8d4 !important;
+        }
+        
+        /* Offline screen */
+        #offline-screen {
+            position: fixed; inset:0; background: white; z-index:10000;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            padding:20px;
+        }
+        .dark #offline-screen {
+            background: #0f172a !important;
+        }
+        .dark #offline-screen h2 { color: #f1f5f9 !important; }
+        .dark #offline-screen p { color: #cbd5e1 !important; }
+        #offline-screen.active { display: flex; }
+        
+        /* Cancel button fix */
+        .dark .bg-gray-100 {
+            background: #334155 !important;
+            color: #f1f5f9 !important;
+        }
+        
+        /* Timer output fix */
+        .dark #timer-output { color: #f1f5f9 !important; }
+        
+        /* Pause button dark mode fix */
+        .dark #pause-btn {
+            background: #334155 !important;
+            color: #f1f5f9 !important;
+        }
+        .dark #pause-btn:hover {
+            background: #475569 !important;
+        }
+        
+        /* OMR row fixes */
+        .dark .omr-row:nth-child(even) { background: #1e293b !important; }
+        .dark .omr-row { border-bottom-color: #334155; }
+        .dark .q-num { border-right-color: #475569; color: #f9a8d4; }
+        
+        /* Bubble fixes - with white border for dark mode */
+        .bubble { border-color: #ec4899; color: #ec4899; background: transparent; }
+        .bubble.active { background: #0f172a !important; border-color: #0f172a !important; color: #fff !important; transform: scale(1.05); }
+        .bubble.correction { background: #22c55e !important; border-color: #22c55e !important; color: #fff !important; transform: scale(1.05); }
+        /* Overtime answer - lighter deep blue */
+        .bubble.overtime-answer { background: #2b4f7c !important; border-color: #1a3a5a !important; color: #fff !important; transform: scale(1.05); }
+        /* Dark mode overtime answer - Fixed: ensures dark mode styling is applied */
+        .dark .bubble.overtime-answer { background: #1e3a5f !important; border-color: #f1f5f9 !important; color: #fff !important; transform: scale(1.05); }
+        /* Dark mode white border for active and correction */
+.dark .bubble.active { border-color: #f1f5f9 !important; background: #0f172a !important; }
+
+/* Overtime answer fix for Dark Mode */
+.dark .bubble.active.overtime-answer { 
+    background: #1e3a5f !important; 
+    border-color: #f1f5f9 !important; 
+    color: #fff !important; 
+}
+
+.dark .bubble.correction { border-color: #f1f5f9 !important; }
+        /* Badge fixes */
+        .dark .max-badge {
+            background: #334155;
+            color: #cbd5e1;
+        }
+        .dark .neg-badge-small {
+            background: #7f1d1d;
+            color: #fecaca;
+        }
+        
+        /* Progress bar fixes */
+        .dark .bar-bg { background: #334155; }
+        
+        /* Theme toggle */
+        .theme-switch {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            width: 64px;
+            height: 32px;
+            background-color: #e2e8f0;
+            border-radius: 40px;
+            padding: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .theme-switch.active { background-color: #ec4899; }
+        .theme-switch .thumb {
+            width: 26px;
+            height: 26px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            transform: translateX(0);
+        }
+        .theme-switch.active .thumb, .dark .theme-switch .thumb { transform: translateX(32px); }
+        .dark .theme-switch { background-color: #ec4899; }
+        
+        /* Retry button */
+        .retry-btn {
+            background: #ec4899; color:white; font-weight:700; padding:12px 32px;
+            border-radius:40px; border:none; box-shadow:0 8px 20px #ec48994d;
+            margin-top:20px; cursor:pointer;
+        }
+
+        /* OMR sheet */
+        .omr-sheet { background:#fff; border-radius:28px; box-shadow:0 15px 40px -10px rgba(0,0,0,0.08); border:1px solid #f1f5f9; transition: background 0.3s ease; }
+        .omr-row { display:flex; align-items:center; padding:12px 20px; border-bottom:1px solid #f1f5f9; flex-wrap:wrap; }
+        .omr-row:nth-child(even) { background:#fff9fb; }
+        .q-num { width:45px; font-weight:800; color:#ec4899; border-right:2px solid #fce7f3; margin-right:15px; flex-shrink:0; }
+        .bubble-group { display:flex; flex:1; justify-content:space-around; gap:6px; flex-wrap:wrap; }
+        .bubble {
+            width:40px; height:40px; border:2px solid #ec4899; border-radius:50%;
+            display:flex; align-items:center; justify-content:center; font-size:.9rem;
+            font-weight:800; color:#ec4899; cursor:pointer; transition:0.2s;
+            user-select:none; touch-action:manipulation; flex-shrink:0;
+        }
+        @media (max-width:480px){ .bubble{width:36px; height:36px; font-size:.8rem;} }
+        .bubble.active { background:#0f172a !important; border-color:#0f172a !important; color:#fff !important; transform:scale(1.05); }
+        .bubble.correction { background:#22c55e !important; border-color:#22c55e !important; color:#fff !important; transform:scale(1.05); }
+        .bubble.overtime-answer { background:#2b4f7c !important; border-color:#1a3a5a !important; color:#fff !important; transform:scale(1.05); }
+        .dark .bubble.overtime-answer { background:#1e3a5f !important; border-color:#f1f5f9 !important; color:#fff !important; transform:scale(1.05); }
+        .dark .bubble.active { border-color:#f1f5f9 !important; background:#0f172a !important; }
+        .dark .bubble.correction { border-color:#f1f5f9 !important; }
+        .blur-omr { filter:blur(8px); pointer-events:none; opacity:0.5; }
+
+        /* Toast */
+        #toast { transition:transform 0.3s, opacity 0.3s; transform:translateY(100px); }
+        #toast.show { transform:translateY(0); opacity:1; }
+
+        /* Mini timer */
+        #mini-timer {
+            position:fixed; bottom:20px; left:20px; z-index:50;
+            background:linear-gradient(145deg,#0b1a2e,#162b3a);
+            color:white; padding:6px 14px; border-radius:40px;
+            box-shadow:0 10px 25px #00000040; display:flex; align-items:center; gap:8px;
+            transition:all 0.3s; transform:translateY(100px); opacity:0; backdrop-filter:blur(8px);
+            border:1px solid #ffffff1a; font-size:.8rem;
+        }
+        .dark #mini-timer { background:linear-gradient(145deg,#1e293b,#0f172a); border-color:#ec489966; }
+        #mini-timer.show { transform:translateY(0); opacity:1; }
+        #mini-timer.overtime { background:linear-gradient(145deg,#991b1b,#b91c1c); }
+        #mini-timer-output { font-weight:800; font-family:monospace; }
+        .answered-badge {
+            background:#ffffff26; padding:3px 12px; border-radius:30px;
+            font-size:.7rem; font-weight:800; color:white; display:flex; align-items:center; gap:5px; border-left:1px solid #ffffff33;
+        }
+
+        /* Alarm container */
+        #alarm-container {
+            position:fixed; top:88%; left:50%; transform:translate(-50%,-50%) translateY(100px);
+            z-index:9999; background:linear-gradient(135deg,#f59e0b,#dc2626);
+            color:white; padding:14px 22px; border-radius:30px;
+            box-shadow:0 15px 30px #dc262666; display:flex; align-items:center; gap:14px; opacity:0;
+            transition:all 0.4s; border:1px solid #ffffff4d; backdrop-filter:blur(10px); white-space:nowrap;
+        }
+        #alarm-container.show { opacity:1; transform:translate(-50%,-50%) translateY(0); }
+        #mute-alarm-btn { background:#ffffff33; border:1px solid #ffffff66; padding:6px 14px; border-radius:40px; font-weight:700; display:flex; align-items:center; gap:6px; cursor:pointer; }
+
+        /* Result card */
+        .result-card-compact {
+            background:white; border-radius:28px; padding:20px; box-shadow:0 20px 35px -10px rgba(0,0,0,0.1);
+            max-width:520px; width:100%; max-height:90vh; overflow-y:auto; margin:0 auto; border:1px solid #ffe4f0; position:relative;
+        }
+        .result-card-compact::-webkit-scrollbar { width:6px; }
+        .result-card-compact::-webkit-scrollbar-track { background:#fce7f3; border-radius:10px; }
+        .result-card-compact::-webkit-scrollbar-thumb { background:#ec4899; border-radius:10px; }
+        .score-hero-compact { background:#fef9fc; border-radius:20px; padding:16px 12px; margin-bottom:16px; border:1px solid #ffe4f0; }
+        .total-large { font-size:3rem; font-weight:900; background:linear-gradient(145deg,#0f172a,#1e293b); -webkit-background-clip:text; -webkit-text-fill-color:transparent; line-height:1; text-align:center; letter-spacing:-1px; }
+        .max-badge { font-size:.75rem; font-weight:700; color:#475569; background:#f1f5f9; padding:3px 14px; border-radius:100px; }
+        .neg-badge-small { background:#fee2e2; color:#b91c1c; padding:2px 12px; border-radius:100px; font-size:.7rem; font-weight:800; margin-left:8px; }
+        .progress-mini { background:#f8fafc; border-radius:18px; padding:14px 16px; margin-bottom:16px; border:1px solid #f1f5f9; }
+        .progress-header { font-size:.7rem; font-weight:800; color:#334155; display:flex; justify-content:space-between; margin-bottom:5px; }
+        .bar-bg { height:6px; background:#e2e8f0; border-radius:10px; overflow:hidden; margin-bottom:14px; }
+        .bar-fill { height:100%; border-radius:10px; transition:width 0.5s; }
+        .stat-grid-compact { display:grid; grid-template-columns:repeat(auto-fit,minmax(100px,1fr)); gap:12px; margin-bottom:16px; }
+        .stat-item { background:white; border-radius:18px; padding:14px 4px; text-align:center; border:1px solid #f1f5f9; }
+        .stat-icon-small { width:32px; height:32px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin:0 auto 8px; }
+        .stat-num { font-size:1.6rem; font-weight:900; line-height:1; margin-bottom:2px; }
+        .stat-label-small { font-size:.65rem; font-weight:700; color:#64748b; text-transform:uppercase; }
+        .time-panel-compact { background:#f9fbfd; border-radius:18px; padding:16px; border:1px solid #edf2f7; margin-bottom:6px; }
+        .time-row-compact { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:.85rem; }
+        .overtime-text-red { color:#b91c1c !important; font-weight:800; }
+        .breakdown-compact { background:#fff5f9; border-radius:16px; padding:12px 16px; margin-top:10px; display:flex; justify-content:space-between; align-items:center; border:1px dashed #f9a8d4; flex-wrap:wrap; gap:12px; }
+        .bd-item { display:flex; flex-direction:column; }
+        .bd-label { font-size:.6rem; font-weight:700; color:#64748b; }
+        .bd-number { font-size:1.3rem; font-weight:900; color:#0f172a; }
+        .bd-number.rose { color:#e11d48; }
+        .bd-number.indigo { color:#4f46e5; }
+        .try-again-compact { width:100%; background:linear-gradient(105deg,#ec4899,#f43f5e); color:white; font-weight:900; padding:14px; border-radius:40px; font-size:.9rem; border:none; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:16px; cursor:pointer; }
+
+        /* Modal overlay */
+        #modal-overlay { 
+            position:fixed; inset:0; background:#0f172ab3; backdrop-filter:blur(6px); z-index:9998; 
+            display:none; align-items:center; justify-content:center; padding:16px; 
+        }
+        #modal-overlay:not(.hidden) { display:flex; }
+
+        #custom-exam-modal, #manage-custom-modal, #finish-confirm { 
+            width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto;
+            background: white; border-radius: 32px; padding: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+        @media (max-width: 640px) {
+            #custom-exam-modal, #manage-custom-modal, #finish-confirm {
+                padding: 20px; border-radius: 24px;
+            }
+        }
+
+        .custom-input { 
+            border:2px solid #e2e8f0; border-radius:20px; padding:12px 16px; 
+            font-weight:600; width:100%; transition: border-color 0.2s;
+        }
+        .custom-input:focus { border-color: #ec4899; outline: none; }
+        
+        .delete-btn { 
+            background:#fee2e2; color:#dc2626; border:1px solid #fecaca; 
+            padding:6px 12px; border-radius:12px; font-size:12px; font-weight:700; 
+            cursor:pointer; transition: all 0.2s;
+        }
+        .delete-btn:hover { background:#fecaca; }
+        
+        .custom-exam-item { 
+            display:flex; justify-content:space-between; align-items:center; 
+            padding:12px 16px; border-radius:16px; background:#f8fafc; 
+            margin-bottom:8px; border:1px solid #e2e8f0;
+        }
+
+        #exam-select-trigger {
+            background:white; border:2px solid #f1f5f9; border-radius:24px; padding:18px 22px;
+            display:flex; align-items:center; justify-content:space-between; cursor:pointer;
+            transition:all 0.2s; font-weight:600; color:#1e293b;
+        }
+        #exam-select-trigger:hover { border-color:#ec4899; }
+        #exam-select-trigger i { color:#ec4899; transition:transform 0.3s; }
+        #exam-select-trigger[aria-expanded="true"] i { transform:rotate(180deg); }
+
+        /* Bottom sheet */
+        #bottom-sheet-overlay {
+            position:fixed; inset:0; background:#00000080; backdrop-filter:blur(8px); z-index:10001;
+            display:flex; align-items:flex-end; justify-content:center; 
+            opacity:0; transition:opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            visibility:hidden; pointer-events: none;
+        }
+        #bottom-sheet-overlay.active { opacity:1; visibility:visible; pointer-events: auto; }
+        #bottom-sheet-overlay.closing { opacity:0; visibility:visible; pointer-events: none; }
+        #bottom-sheet-panel {
+            background:white; width:100%; max-width:520px; 
+            border-radius:36px 36px 0 0;
+            transform:translateY(100%); 
+            transition:transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.1); 
+            max-height:85vh; display:flex; flex-direction:column;
+            border-top:4px solid #ec4899;
+            box-shadow:0 -20px 50px #ec489926;
+        }
+        #bottom-sheet-overlay.active #bottom-sheet-panel { transform:translateY(0); }
+        #bottom-sheet-overlay.closing #bottom-sheet-panel { transform:translateY(100%); }
+        @media (min-width:768px) {
+            #bottom-sheet-overlay { align-items:center; }
+            #bottom-sheet-panel { 
+                border-radius:40px; width:480px; max-width:90vw; transform:scale(0.9) translateY(20px); opacity:0; 
+                transition:transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.1), opacity 0.25s; border-top:none;
+            }
+            #bottom-sheet-overlay.active #bottom-sheet-panel { transform:scale(1) translateY(0); opacity:1; }
+            #bottom-sheet-overlay.closing #bottom-sheet-panel { transform:scale(0.9) translateY(20px); opacity:0; }
+        }
+
+        .sheet-header { padding:24px 28px 16px; border-bottom:1px solid #ffe4f0; display:flex; justify-content:space-between; align-items:center; font-weight:800; color:#0f172a; font-size:1.3rem; }
+        .sheet-close { background:#f1f5f9; border:none; width:36px; height:36px; border-radius:50%; font-size:18px; cursor:pointer; color:#64748b; display:flex; align-items:center; justify-content:center; transition: all 0.2s; }
+        .sheet-close:hover { background:#ec4899; color:white; }
+        .sheet-options { overflow-y:auto; padding:16px; flex:1; scrollbar-width: thin; scrollbar-color: #ec4899 #fce7f3; }
+        .sheet-options::-webkit-scrollbar { width: 6px; }
+        .sheet-options::-webkit-scrollbar-track { background: #fce7f3; }
+        .sheet-options::-webkit-scrollbar-thumb { background: #ec4899; border-radius: 10px; }
+
+        .sheet-option-wrapper { position:relative; margin:8px 0; overflow:hidden; border-radius:28px; transition: all 0.2s; }
+        .sheet-option {
+            padding:18px 22px; border-radius:28px; font-weight:600; color:#334155; cursor:pointer;
+            transition:all 0.2s; border:1px solid transparent; background:#fafafa;
+            display:flex; align-items:center; gap:14px; position:relative; user-select:none;
+        }
+        .sheet-option:hover { background:#fff0f7; border-color:#f9a8d4; transform:translateX(4px); }
+        .sheet-option.selected { background:#ec4899; color:white; font-weight:700; border-color:#ec4899; }
+        .sheet-option.selected i { color:white; }
+        .sheet-option i { color:#ec4899; width:20px; }
+        .sheet-option.custom-option { background:linear-gradient(145deg,#fdf2f8,#ffffff); border:1px dashed #ec4899; }
+
+        /* Swipe to delete - only for custom exams */
+        .delete-background {
+            position:absolute; top:0; right:0; height:100%; width:80px; background:#ef4444; border-radius:0 28px 28px 0;
+            display:flex; align-items:center; justify-content:center; color:white; font-weight:700;
+            transform:translateX(100%); transition:transform 0.2s; pointer-events:none; z-index:5;
+        }
+        .sheet-option-wrapper.swiping .delete-background { transform:translateX(0); }
+        .sheet-option-wrapper.swiping .sheet-option { transform:translateX(-40px); background:#fee2e2; border-color:#ef4444; color:#b91c1c; transition:transform 0.2s; }
+        
+        /* Disable swipe for non-custom items */
+        .sheet-option-wrapper:not(.custom-item) .delete-background { display: none; }
+
+        .max-w-6xl { max-width:1280px; }
+        .lg\:col-span-5 { grid-column: span 5 / span 5; }
+        .lg\:col-span-7 { grid-column: span 7 / span 7; }
+        @media (max-width: 1024px) { 
+            .lg\:col-span-5, .lg\:col-span-7 { grid-column: span 12 / span 12; } 
+        }
+        .hidden { display: none !important; }
+        * {
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+}
+    </style>
+</head>
+<body class="min-h-screen pb-20">
+
+<!-- offline screen -->
+<div id="offline-screen">
+    <div class="wifi-icon"><svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.859a10 10 0 0 1 14 0"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/><line x1="1" y1="1" x2="23" y2="23"/></svg></div>
+    <h2 class="text-2xl font-extrabold">No Internet Connection</h2>
+    <p id="offline-msg" class="font-semibold">Please turn on your internet connection</p>
+    <button class="retry-btn" onclick="window.location.reload()">Retry Now</button>
+</div>
+
+<!-- main content -->
+<div id="main-content" style="display: none;">
+    <!-- mini timer -->
+    <div id="mini-timer">
+        <div id="mini-timer-clock"><i data-lucide="clock" class="w-3 h-3"></i></div>
+        <div id="mini-timer-output" class="font-mono">00:00</div>
+        <div id="answered-counter" class="answered-badge">
+            <i data-lucide="check-circle" class="w-3 h-3"></i>
+            <span id="answered-fraction">0/0</span>
+        </div>
+    </div>
+
+    <!-- alarm center -->
+    <div id="alarm-container" class="hidden">
+        <div class="alarm-icon"><i data-lucide="alarm-clock" class="w-6 h-6"></i></div>
+        <div><p class="font-bold text-sm">Time's Up!</p><p class="text-xs opacity-90">Exam time has ended</p></div>
+        <button id="mute-alarm-btn" onclick="muteAlarm()"><i data-lucide="volume-x" class="w-4 h-4"></i> Mute</button>
+    </div>
+
+    <!-- toast -->
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] opacity-0 pointer-events-none">
+        <div class="bg-slate-900 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3"><i data-lucide="info" class="text-blue-400 w-5 h-5"></i><span id="toast-msg" class="font-bold text-sm"></span></div>
+    </div>
+
+    <!-- modal overlay -->
+    <div id="modal-overlay" class="hidden">
+        <!-- finish confirm -->
+        <div id="finish-confirm" class="hidden">
+            <h3 class="text-xl font-black mb-4">Finish Answering ?</h3>
+            <p class="text-slate-500 mb-7">Now mark mistakes in <span class="text-green-600 font-bold">green</span>. Then submit.</p>
+            <div class="flex gap-3">
+                <button onclick="closeModal()" class="flex-1 py-3.5 bg-gray-100 font-bold rounded-2xl">Cancel</button>
+                <button onclick="confirmFinish()" class="flex-1 py-3.5 bg-pink-500 text-white font-bold rounded-2xl">Start Marking</button>
+            </div>
+        </div>
+
+        <!-- result card -->
+        <div id="result-dashboard" class="result-card-compact hidden">
+            <div class="score-hero-compact">
+                <div class="total-large" id="res-total-large">0.00</div>
+                <div class="flex flex-wrap justify-center items-center mt-1 gap-1">
+                    <span class="max-badge" id="res-total-max">out of 0.00</span>
+                    <span class="neg-badge-small" id="res-neg-display">neg 0.00</span>
+                </div>
+            </div>
+            <div class="progress-mini">
+                <div class="progress-header"><span>📊 Score</span><span id="score-percentage" class="font-black text-pink-600">0%</span></div>
+                <div class="bar-bg"><div id="score-progress-bar" class="bar-fill bg-gradient-to-r from-pink-500 to-rose-500" style="width:0%"></div></div>
+                <div class="progress-header"><span>🎯 Accuracy</span><span id="accuracy-percentage" class="font-black text-blue-600">0%</span></div>
+                <div class="bar-bg"><div id="accuracy-progress-bar" class="bar-fill bg-gradient-to-r from-blue-500 to-cyan-500" style="width:0%"></div></div>
+            </div>
+            <div class="stat-grid-compact">
+                <div class="stat-item"><div class="stat-icon-small bg-emerald-500"><i data-lucide="check" class="w-4 h-4 text-white"></i></div><div id="res-correct-box" class="stat-num text-emerald-700">0</div><div class="stat-label-small">Correct</div></div>
+                <div class="stat-item"><div class="stat-icon-small bg-red-500"><i data-lucide="x" class="w-4 h-4 text-white"></i></div><div id="res-wrong-box" class="stat-num text-red-600">0</div><div class="stat-label-small">Wrong</div></div>
+                <div class="stat-item"><div class="stat-icon-small bg-slate-400"><i data-lucide="minus" class="w-4 h-4 text-white"></i></div><div id="res-skipped-box" class="stat-num text-slate-600">0</div><div class="stat-label-small">Blank</div></div>
+            </div>
+            <div class="time-panel-compact">
+                <div class="time-row-compact"><span class="flex items-center gap-1 font-bold text-slate-700"><i data-lucide="hourglass" class="w-3.5 h-3.5 text-pink-400"></i> Exam Duration</span><span class="font-black" id="res-exam-duration">00:00</span></div>
+                <div id="overtime-container" class="time-row-compact hidden"><span class="flex items-center gap-1 font-bold text-red-600"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Overtime</span><span class="font-black overtime-text-red" id="res-overtime">+00:00</span></div>
+                <div class="time-row-compact"><span class="flex items-center gap-1 font-bold text-slate-700"><i data-lucide="clock" class="w-3.5 h-3.5 text-indigo-400"></i> Total Time Taken</span><span class="font-black" id="res-total-time-new">00:00</span></div>
+                <div id="ans-breakdown-extra" class="breakdown-compact hidden">
+                    <div class="bd-item"><span class="bd-label">📋Total Ans</span><span class="bd-number" id="total-answered-extra">0</span></div>
+                    <div class="bd-item items-center"><span class="bd-label">⏱️In Time</span><span class="bd-number indigo" id="in-time-ans">0</span></div>
+                    <div class="bd-item items-end"><span class="bd-label">⌛Overtime</span><span class="bd-number rose" id="overtime-ans">0</span></div>
+                </div>
+            </div>
+            <button onclick="location.reload()" class="try-again-compact"><i data-lucide="rotate-ccw" class="w-4 h-4"></i> TRY AGAIN</button>
+        </div>
+
+        <!-- custom exam modal -->
+        <div id="custom-exam-modal" class="hidden">
+            <h3 class="text-xl font-black mb-6 flex items-center gap-2"><i data-lucide="plus-circle" class="text-pink-500"></i> Custom Exam</h3>
+            <div class="space-y-5 mb-8">
+                <div><label class="text-xs font-bold text-gray-400 uppercase mb-2 block">Exam Name</label><input type="text" id="custom-name" placeholder="e.g., My Custom Test" class="custom-input" maxlength="30"></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="text-xs font-bold text-gray-400 uppercase mb-2 block">Sec per MCQ</label><input type="number" id="custom-ratio" min="10" max="300" value="45" class="custom-input"></div>
+                    <div><label class="text-xs font-bold text-gray-400 uppercase mb-2 block">Marks Correct</label><input type="number" id="custom-correct" min="0.1" max="10" step="0.01" value="1.0" class="custom-input"></div>
+                </div>
+                <div><label class="text-xs font-bold text-gray-400 uppercase mb-2 block">Negative per Wrong</label><input type="number" id="custom-wrong" min="0" max="5" step="0.01" value="0.25" class="custom-input"></div>
+            </div>
+            <div class="flex gap-3"><button onclick="closeCustomModal()" class="flex-1 py-4 bg-gray-100 font-bold rounded-2xl">Cancel</button><button onclick="saveCustomExam()" class="flex-1 py-4 bg-pink-500 text-white font-bold rounded-2xl">Save</button></div>
+        </div>
+
+        <!-- manage custom modal -->
+        <div id="manage-custom-modal" class="hidden">
+            <h3 class="text-xl font-black mb-6 flex items-center gap-2"><i data-lucide="settings" class="text-pink-500"></i> Manage Custom</h3>
+            <div id="custom-exams-list" class="mb-6"></div>
+            <div class="flex gap-3"><button onclick="closeManageModal()" class="flex-1 py-4 bg-gray-100 font-bold rounded-2xl">Close</button><button onclick="openCustomModal()" class="flex-1 py-4 bg-pink-500 text-white font-bold rounded-2xl flex items-center justify-center gap-2"><i data-lucide="plus"></i> Add</button></div>
+        </div>
+    </div>
+
+    <!-- bottom sheet -->
+    <div id="bottom-sheet-overlay" onclick="closeBottomSheet(event)">
+        <div id="bottom-sheet-panel" onclick="event.stopPropagation()">
+            <div class="sheet-header">
+                <span>Select Exam Type</span>
+                <button class="sheet-close" onclick="closeBottomSheet()">✕</button>
+            </div>
+            <div class="sheet-options" id="sheet-options-container"></div>
+        </div>
+    </div>
+
+    <!-- nav -->
+    <nav class="p-6 flex justify-between items-center max-w-6xl mx-auto flex-wrap gap-2">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 bg-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-pink-500/30"><i data-lucide="layers" class="text-white"></i></div>
+            <h1 class="text-2xl font-black tracking-tighter">OMR <span class="text-pink-500">PRO</span></h1>
+        </div>
+        <div id="theme-toggle" class="theme-switch" onclick="toggleTheme()" role="switch" aria-checked="false">
+            <div class="thumb"><span id="theme-icon">☀️</span></div>
+        </div>
+    </nav>
+
+    <!-- main grid -->
+    <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- left column -->
+        <div class="lg:col-span-5 space-y-6">
+            <div id="config-card" class="bg-white p-6 md:p-8 rounded-[32px] border border-gray-200 shadow-sm">
+                <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i data-lucide="settings-2" class="text-pink-500"></i> Exam Settings</h2>
+                <div class="space-y-5">
+                    <div>
+                        <label class="text-xs font-bold text-gray-400 uppercase mb-2 block">Select Exam Type</label>
+                        <div id="exam-select-trigger" onclick="openBottomSheet()" role="button" tabindex="0" aria-expanded="false">
+                            <span id="selected-exam-label" class="truncate">Med/GST/BUP (100mcq/60m | 1.0/-0.25)</span>
+                            <i data-lucide="chevron-up" class="w-5 h-5 flex-shrink-0"></i>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><label class="text-xs font-bold text-gray-400 uppercase mb-2 block">MCQ From</label><input type="number" id="q-start" value="1" class="w-full p-4 rounded-2xl bg-gray-50 border border-gray-200"></div>
+                        <div><label class="text-xs font-bold text-gray-400 uppercase mb-2 block">MCQ To</label><input type="number" id="q-end" value="25" class="w-full p-4 rounded-2xl bg-gray-50 border border-gray-200"></div>
+                    </div>
+                    <div id="exam-preview" class="mt-4 p-4 bg-pink-50 rounded-xl border border-pink-100 hidden">
+                        <div class="flex items-center justify-between flex-wrap">
+                            <span class="text-xs font-bold text-pink-500 uppercase flex gap-1"><i data-lucide="eye" class="w-4 h-4"></i>Preview:</span>
+                            <span id="preview-questions" class="text-sm font-black text-pink-700">0</span><span class="text-xs text-pink-600"> MCQs • </span><span id="preview-time" class="text-sm font-black text-pink-700">00:00</span><span class="text-xs text-pink-600"> time</span>
+                        </div>
+                        <div id="preview-config" class="mt-2 text-xs text-pink-600 font-semibold truncate"></div>
+                    </div>
+                    <button onclick="startExam()" class="w-full py-4 bg-pink-500 text-white font-bold rounded-2xl shadow-xl">Start Exam</button>
+                </div>
+            </div>
+            <div id="timer-card" class="hidden bg-white p-8 md:p-10 rounded-[32px] text-center border border-gray-200 shadow-sm sticky top-6">
+                <p id="timer-label" class="text-xs font-black uppercase tracking-widest text-gray-400 mb-4">Time Elapsed</p>
+                <div id="timer-output" class="text-5xl md:text-6xl font-black mb-8 font-mono text-slate-800">00:00</div>
+                <div class="flex gap-4">
+                    <button id="pause-btn" onclick="togglePause()" class="flex-1 py-4 bg-slate-800 text-white rounded-2xl font-bold">Pause</button>
+                    <button onclick="location.reload()" class="p-4 bg-gray-100 rounded-2xl"><i data-lucide="refresh-ccw"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- right column -->
+        <div id="omr-container" class="lg:col-span-7 hidden">
+            <div class="omr-sheet">
+                <div class="p-8 md:p-10 border-b-2 border-pink-100 text-center">
+                    <h2 id="sheet-title" class="text-2xl font-black text-slate-800 uppercase">OMR Sheet</h2>
+                    <p class="text-pink-500 font-bold text-[10px] tracking-widest">Select your answers <br> DEV:ASIR ABED KHAN OMI</p>
+                </div>
+                <div id="omr-grid-container"><div id="omr-grid" class="pb-20"></div></div>
+                <div class="p-6 bg-gray-50 rounded-b-[24px] flex gap-4">
+                    <button id="main-action-btn" onclick="handleMainAction()" class="flex-1 py-5 bg-blue-600 text-white font-black rounded-2xl shadow-lg flex items-center justify-center gap-2"><i data-lucide="check-circle-2"></i> <span>FINISH & CHECK</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() {
+    const $ = id => document.getElementById(id);
+    
+    // Default configs
+    const DEFAULT_CONFIGS = {
+        DU: { name: "DU", ratio: 40, perCorrect: 1, perWrong: 0.25 },
+        MED_GST_BUP: { name: "Med/GST/BUP", ratio: 36, perCorrect: 1, perWrong: 0.25 },
+        RU: { name: "RU", ratio: 45, perCorrect: 1.25, perWrong: 0.25 },
+        DU_TECH: { name: "DU Tech", ratio: 45, perCorrect: 1, perWrong: 0 },
+        CUSTOM: { name: "Custom Exam", ratio: 45, perCorrect: 1, perWrong: 0.25 }
+    };
+    
+    let CONFIGS = {};
+    let timeLeft = 0, initialTimeLeft = 0, timerInterval = null, isPaused = false;
+    let currentStep = 'writing';
+    let totalQuestions = 0, isTimeUp = false, alarmInterval = null;
+    let modalState = { fromManageModal: false };
+    let answerTimestamps = [];
+    let allottedExamSeconds = 0;
+    let isBottomSheetClosing = false;
+    let touchStartX = null, currentSwipeItem = null;
+
+    // Format time
+    const formatTime = s => { 
+        let abs = Math.abs(s); 
+        let h = Math.floor(abs/3600); 
+        let m = Math.floor((abs%3600)/60); 
+        let sec = abs%60; 
+        return h>0 ? `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}` : `${m.toString().padStart(2,'0')}:${sec.toString().padStart(2,'0')}`; 
+    };
+
+    // Show toast
+    const showToast = msg => { 
+        $('toast-msg').innerText = msg; 
+        $('toast').classList.add('show', 'opacity-100'); 
+        setTimeout(() => $('toast').classList.remove('show', 'opacity-100'), 3000); 
+    };
+
+    // Load saved configs
+    (function loadSaved() {
+        const savedConfigs = JSON.parse(localStorage.getItem('omr_custom_configs') || '{}');
+        CONFIGS = { ...DEFAULT_CONFIGS, ...savedConfigs };
+        const savedSelected = localStorage.getItem('omr_selected_exam') || 'MED_GST_BUP';
+        window.__currentExamValue = savedSelected;
+        if (!CONFIGS.CUSTOM) CONFIGS.CUSTOM = { name: "Custom Exam", ratio: 45, perCorrect: 1, perWrong: 0.25 };
+        updateExamPreview();
+        updateTriggerLabel();
+        initTheme();
+    })();
+
+        // --- Modern Theme Logic: Custom Sun (𖤓) & Black Moon (࣪ ִֶָ☾.) ---
+    function initTheme() {
+        // Retrieve saved theme from localStorage, default to 'light'
+        const saved = localStorage.getItem('omr_theme') || 'light';
+        const html = document.documentElement;
+        const toggle = document.getElementById('theme-toggle');
+        const icon = document.getElementById('theme-icon');
+        
+        if (saved === 'dark') {
+            html.classList.add('dark');
+            toggle?.classList.add('active');
+            if (icon) {
+                icon.innerText = '࣪ ִֶָ☾.'; // Custom Moon symbol
+                icon.style.color = '#000000'; // Black color for Moon
+                // Add a white glow so the black moon is visible on dark background
+                icon.style.textShadow = '0 0 5px rgba(255, 255, 255, 0.8)'; 
+            }
+            toggle?.setAttribute('aria-checked', 'true');
+        } else {
+            html.classList.remove('dark');
+            toggle?.classList.remove('active');
+            if (icon) {
+                icon.innerText = '𖤓'; // Custom Sun symbol
+                icon.style.color = '#f59e0b'; // Amber/Orange color for Sun
+                icon.style.textShadow = 'none';
+            }
+            toggle?.setAttribute('aria-checked', 'false');
+        }
+    }
+
+    window.toggleTheme = function() {
+        const html = document.documentElement;
+        const toggle = document.getElementById('theme-toggle');
+        const icon = document.getElementById('theme-icon');
+        
+        // Toggle the 'dark' class on the HTML element
+        const isNowDark = html.classList.toggle('dark');
+        
+        // Update the toggle button's sliding state
+        toggle?.classList.toggle('active', isNowDark);
+        toggle?.setAttribute('aria-checked', isNowDark ? 'true' : 'false');
+        
+        // Change icon symbols and colors instantly
+        if (icon) {
+            if (isNowDark) {
+                icon.innerText = '࣪ ִֶָ☾.';
+                icon.style.color = '#000000'; // Dark Mode Moon Color
+                icon.style.textShadow = '0 0 5px rgba(255, 255, 255, 0.8)';
+            } else {
+                icon.innerText = '𖤓';
+                icon.style.color = '#f59e0b'; // Light Mode Sun Color
+                icon.style.textShadow = 'none';
+            }
+        }
+        
+        // Save the theme preference for the next visit
+        localStorage.setItem('omr_theme', isNowDark ? 'dark' : 'light');
+        
+        // Refresh UI icons
+        setTimeout(() => {
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }, 50);
+    };
+
+    // Run theme initialization on page load
+    initTheme();
+
+
+    // Update trigger label
+    function updateTriggerLabel() {
+        const val = window.__currentExamValue || 'MED_GST_BUP';
+        const config = CONFIGS[val] || CONFIGS.MED_GST_BUP;
+        $('selected-exam-label').innerText = `${config.name} (${config.ratio}s | ${config.perCorrect}/-${config.perWrong})`;
+    }
+
+    // Update preview
+    function updateExamPreview() {
+        const start = parseInt($('q-start').value);
+        const end = parseInt($('q-end').value);
+        if (isNaN(start) || isNaN(end) || start > end) { 
+            $('exam-preview').classList.add('hidden'); 
+            return; 
+        }
+        const type = window.__currentExamValue || 'MED_GST_BUP';
+        let config = type.startsWith('CUSTOM_') ? CONFIGS[type] : (CONFIGS[type] || CONFIGS.MED_GST_BUP);
+        const totalQ = end - start + 1;
+        $('preview-questions').innerText = totalQ;
+        $('preview-time').innerText = formatTime(totalQ * config.ratio);
+        $('preview-config').innerHTML = `${config.name} • ${config.perCorrect}/-${config.perWrong} • ${config.ratio}s`;
+        $('exam-preview').classList.remove('hidden');
+    }
+
+    // Swipe to delete functions - RESTRICTED to custom exams only
+    function initSwipeToDelete() {
+        const options = document.querySelectorAll('.sheet-option-wrapper.custom-item');
+        options.forEach(option => {
+            option.addEventListener('touchstart', handleTouchStart, { passive: true });
+            option.addEventListener('touchmove', handleTouchMove, { passive: false });
+            option.addEventListener('touchend', handleTouchEnd);
+        });
+    }
+
+    function handleTouchStart(e) {
+        touchStartX = e.touches[0].clientX;
+        currentSwipeItem = e.currentTarget;
+    }
+
+    function handleTouchMove(e) {
+        if (!touchStartX || !currentSwipeItem) return;
+        
+        const touchX = e.touches[0].clientX;
+        const diffX = touchStartX - touchX;
+        
+        if (diffX > 30 && diffX < 100) {
+            e.preventDefault();
+            currentSwipeItem.classList.add('swiping');
+        }
+    }
+
+    function handleTouchEnd(e) {
+        if (!currentSwipeItem) return;
+        
+        const diffX = touchStartX - e.changedTouches[0].clientX;
+        
+        if (diffX > 50 && currentSwipeItem.classList.contains('swiping')) {
+            const optionEl = currentSwipeItem.querySelector('.sheet-option');
+            if (optionEl && optionEl.dataset.value && optionEl.dataset.value.startsWith('CUSTOM_')) {
+                deleteCustomExam(optionEl.dataset.value);
+            }
+        }
+        
+        currentSwipeItem?.classList.remove('swiping');
+        touchStartX = null;
+        currentSwipeItem = null;
+    }
+
+    // Bottom sheet functions
+    window.openBottomSheet = function() {
+        if (isBottomSheetClosing) return;
+        renderSheetOptions();
+        const overlay = $('bottom-sheet-overlay');
+        overlay.classList.remove('closing', 'active');
+        void overlay.offsetHeight;
+        overlay.classList.add('active');
+        $('exam-select-trigger').setAttribute('aria-expanded', 'true');
+    };
+
+    window.closeBottomSheet = function(e) {
+        if (isBottomSheetClosing) return;
+        if (!e || e.target.id === 'bottom-sheet-overlay' || e.target.classList.contains('sheet-close')) {
+            isBottomSheetClosing = true;
+            const overlay = $('bottom-sheet-overlay');
+            overlay.classList.add('closing');
+            setTimeout(() => { 
+                overlay.classList.remove('active', 'closing'); 
+                isBottomSheetClosing = false;
+            }, 400);
+            $('exam-select-trigger').setAttribute('aria-expanded', 'false');
+        }
+    };
+
+    function renderSheetOptions() {
+        const container = $('sheet-options-container');
+        container.innerHTML = '';
+        const defaultOrder = ['DU','MED_GST_BUP','RU','DU_TECH'];
+        const customKeys = Object.keys(CONFIGS).filter(k => k.startsWith('CUSTOM_'));
+        const allItems = [
+            ...defaultOrder.filter(k => CONFIGS[k]).map(k => ({ key: k, cfg: CONFIGS[k] })),
+            ...customKeys.map(k => ({ key: k, cfg: CONFIGS[k] })),
+            { key: 'CUSTOM', cfg: CONFIGS.CUSTOM, isPlaceholder: true }
+        ];
+        
+        allItems.forEach(item => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'sheet-option-wrapper';
+            
+            // Add custom-item class only for custom exams
+            if (item.key.startsWith('CUSTOM_')) {
+                wrapper.classList.add('custom-item');
+                
+                const deleteBg = document.createElement('div');
+                deleteBg.className = 'delete-background';
+                deleteBg.innerHTML = '<span>Delete</span>';
+                wrapper.appendChild(deleteBg);
+            }
+            
+            const option = document.createElement('div');
+            option.className = 'sheet-option';
+            if (item.isPlaceholder) option.classList.add('custom-option');
+            if (item.key === window.__currentExamValue) option.classList.add('selected');
+            
+            const icon = document.createElement('i');
+            icon.setAttribute('data-lucide', item.isPlaceholder ? 'plus-circle' : (item.key.startsWith('CUSTOM_') ? 'star' : 'book-open'));
+            option.appendChild(icon);
+            
+            const span = document.createElement('span');
+            span.innerText = `${item.cfg.name} (${item.cfg.ratio}s | ${item.cfg.perCorrect}/-${item.cfg.perWrong})`;
+            option.appendChild(span);
+            option.dataset.value = item.key;
+            
+            option.addEventListener('click', (e) => {
+                if (wrapper.classList.contains('swiping')) return;
+                if (item.key === 'CUSTOM') {
+                    closeBottomSheet();
+                    setTimeout(() => openCustomModal(), 400);
+                } else {
+                    window.__currentExamValue = item.key;
+                    localStorage.setItem('omr_selected_exam', item.key);
+                    updateTriggerLabel();
+                    updateExamPreview();
+                    closeBottomSheet();
+                }
+            });
+            
+            wrapper.appendChild(option);
+            container.appendChild(wrapper);
+        });
+        
+        lucide?.createIcons();
+        initSwipeToDelete();
+    }
+
+    // Start exam
+    window.startExam = function() {
+        const start = parseInt($('q-start').value);
+        const end = parseInt($('q-end').value);
+        const type = window.__currentExamValue;
+        if (start > end) return showToast("Invalid range!");
+        if (type === 'CUSTOM') return openCustomModal();
+        
+        const config = CONFIGS[type] || CONFIGS.MED_GST_BUP;
+        allottedExamSeconds = (end - start + 1) * config.ratio;
+        timeLeft = allottedExamSeconds;
+        initialTimeLeft = timeLeft;
+        totalQuestions = (end - start + 1);
+        isTimeUp = false;
+        currentStep = 'writing';
+        answerTimestamps = new Array(totalQuestions).fill(0);
+        
+        $('config-card').classList.add('hidden');
+        $('timer-card').classList.remove('hidden');
+        $('omr-container').classList.remove('hidden');
+        
+        const grid = $('omr-grid');
+        grid.innerHTML = '';
+        for (let i = start; i <= end; i++) {
+            const row = document.createElement('div');
+            row.className = 'omr-row';
+            row.dataset.qIndex = i - start;
+            row.innerHTML = `<div class="q-num">${i}</div><div class="bubble-group">${['A','B','C','D'].map(opt => `<div class="bubble" onclick="handleBubbleClick(this, ${i-start})">${opt}</div>`).join('')}</div>`;
+            grid.appendChild(row);
+        }
+        
+        startTimer();
+        updateAnsweredCounter();
+        updateMiniTimer();
+    };
+
+    window.handleBubbleClick = (el, qIdx) => {
+        if (isPaused && currentStep === 'writing') return showToast("Timer is paused!");
+        if (currentStep === 'writing') {
+            // Remove any previous state
+            el.parentElement.querySelectorAll('.bubble').forEach(b => {
+                b.classList.remove('active', 'overtime-answer');
+            });
+            el.classList.add('active');
+            
+            // Check if it's overtime and mark with lighter deep blue if needed
+            if (timeLeft <= 0) {
+                el.classList.add('overtime-answer');
+                if (answerTimestamps && answerTimestamps[qIdx] === 0) {
+                    answerTimestamps[qIdx] = 2; // overtime answer
+                }
+            } else {
+                if (answerTimestamps && answerTimestamps[qIdx] === 0) {
+                    answerTimestamps[qIdx] = 1; // in-time answer
+                }
+            }
+            updateAnsweredCounter();
+        } else if (currentStep === 'marking') {
+            if (!el.classList.contains('active')) el.classList.toggle('correction');
+            else showToast("Original answer!");
+        }
+    };
+
+    function updateAnsweredCounter() {
+        if (!totalQuestions) return;
+        const answered = document.querySelectorAll('.omr-row .bubble.active').length;
+        $('answered-fraction').innerText = `${answered}/${totalQuestions}`;
+    }
+
+    function startTimer() {
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            if (!isPaused) {
+                timeLeft--;
+                $('timer-output').innerText = formatTime(timeLeft);
+                updateMiniTimer();
+                if (timeLeft <= 0 && !isTimeUp) {
+                    isTimeUp = true;
+                    triggerAlarm();
+                    $('timer-output').classList.add('overtime');
+                    $('timer-label').innerText = "Overtime";
+                    $('timer-label').classList.add('text-red-600');
+                }
+            }
+        }, 1000);
+    }
+
+    function handleScrollForMiniTimer() {
+        const timerCard = $('timer-card');
+        if (!timerCard) return;
+        const rect = timerCard.getBoundingClientRect();
+        const threshold = rect.top + rect.height * 0.45;
+        const mini = $('mini-timer');
+        if (threshold < 0 || rect.bottom < 0) mini.classList.add('show');
+        else mini.classList.remove('show');
+    }
+    window.addEventListener('scroll', handleScrollForMiniTimer);
+
+    function updateMiniTimer() {
+        $('mini-timer-output').innerText = formatTime(timeLeft);
+        if (timeLeft <= 0) $('mini-timer').classList.add('overtime');
+        else $('mini-timer').classList.remove('overtime');
+        updateAnsweredCounter();
+    }
+
+    window.togglePause = function() {
+        isPaused = !isPaused;
+        $('pause-btn').innerText = isPaused ? "Resume" : "Pause";
+        if (currentStep === 'writing') $('omr-grid-container').classList.toggle('blur-omr', isPaused);
+        if (isPaused && alarmInterval) muteAlarm();
+    };
+
+    function triggerAlarm() {
+        $('alarm-container').classList.remove('hidden');
+        setTimeout(() => $('alarm-container').classList.add('show'), 100);
+        alarmInterval = setInterval(() => {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.frequency.value = 800;
+                gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+            } catch (e) { }
+        }, 1000);
+    }
+
+    window.muteAlarm = function() {
+        clearInterval(alarmInterval); alarmInterval = null;
+        $('alarm-container').classList.remove('show');
+        setTimeout(() => $('alarm-container').classList.add('hidden'), 400);
+    };
+
+    window.handleMainAction = function() {
+        if (currentStep === 'writing') {
+            $('modal-overlay').classList.remove('hidden');
+            $('finish-confirm').classList.remove('hidden');
+        } else {
+            calculateResult();
+        }
+        muteAlarm();
+    };
+
+    window.confirmFinish = function() {
+        currentStep = 'marking';
+        clearInterval(timerInterval);
+        $('res-exam-duration').innerText = formatTime(allottedExamSeconds);
+        const totalTimeTaken = initialTimeLeft - timeLeft;
+        $('res-total-time-new').innerText = formatTime(totalTimeTaken).replace('-','');
+        if (timeLeft < 0) {
+            $('overtime-container').classList.remove('hidden');
+            $('res-overtime').innerText = `+${formatTime(Math.abs(timeLeft))}`;
+        }
+        $('sheet-title').innerText = "Correction Mode";
+        $('sheet-title').classList.add('text-green-600');
+        $('main-action-btn').innerHTML = '<i data-lucide="send"></i> <span>SUBMIT EXAM</span>';
+        $('main-action-btn').className = "flex-1 py-5 bg-green-600 text-white font-black rounded-2xl shadow-lg flex items-center justify-center gap-2";
+        $('pause-btn').classList.add('hidden');
+        $('omr-grid-container').classList.remove('blur-omr');
+        closeModal();
+        lucide?.createIcons();
+        showToast("Mark correct answers in GREEN");
+    };
+
+    function calculateResult() {
+        const uni = window.__currentExamValue;
+        const config = CONFIGS[uni] || CONFIGS.MED_GST_BUP;
+        let correct = 0, wrong = 0, skipped = 0, inTimeAns = 0, overtimeAns = 0;
+        const rows = document.querySelectorAll('.omr-row');
+        
+        rows.forEach((row, idx) => {
+            const user = row.querySelector('.bubble.active');
+            const correctEl = row.querySelector('.bubble.correction');
+            if (!user) skipped++;
+            else if (correctEl) wrong++;
+            else correct++;
+            if (user) {
+                if (answerTimestamps && answerTimestamps[idx] === 1) inTimeAns++;
+                else if (answerTimestamps && answerTimestamps[idx] === 2) overtimeAns++;
+                else { if (timeLeft < 0) overtimeAns++; else inTimeAns++; }
+            }
+        });
+        
+        const neg = wrong * config.perWrong;
+        const totalScore = (correct * config.perCorrect) - neg;
+        const maxPossible = totalQuestions * config.perCorrect;
+        let scorePerc = maxPossible > 0 ? Math.max(0, (totalScore / maxPossible) * 100) : 0;
+        let accPerc = (correct + wrong) > 0 ? (correct / (correct + wrong)) * 100 : 0;
+        
+        $('res-total-large').innerText = totalScore.toFixed(2);
+        $('res-total-max').innerText = `out of ${maxPossible.toFixed(2)}`;
+        $('res-neg-display').innerText = `neg ${neg.toFixed(2)}`;
+        $('score-percentage').innerText = `${Math.round(scorePerc)}%`;
+        $('score-progress-bar').style.width = `${scorePerc}%`;
+        $('accuracy-percentage').innerText = `${Math.round(accPerc)}%`;
+        $('accuracy-progress-bar').style.width = `${accPerc}%`;
+        $('res-correct-box').innerText = correct;
+        $('res-wrong-box').innerText = wrong;
+        $('res-skipped-box').innerText = skipped;
+        $('total-answered-extra').innerText = correct + wrong;
+        $('in-time-ans').innerText = inTimeAns;
+        $('overtime-ans').innerText = overtimeAns;
+        
+        if (overtimeAns > 0) $('ans-breakdown-extra').classList.remove('hidden');
+        else $('ans-breakdown-extra').classList.add('hidden');
+        
+        $('modal-overlay').classList.remove('hidden');
+        $('finish-confirm').classList.add('hidden');
+        $('result-dashboard').classList.remove('hidden');
+        lucide?.createIcons();
+    }
+
+    // Modal functions
+    window.closeModal = () => {
+        $('modal-overlay').classList.add('hidden');
+        ['finish-confirm','custom-exam-modal','manage-custom-modal','result-dashboard'].forEach(id => $(id).classList.add('hidden'));
+        modalState.fromManageModal = false;
+    };
+
+    window.openCustomModal = () => {
+        const manageModal = $('manage-custom-modal');
+        modalState.fromManageModal = !manageModal.classList.contains('hidden');
+        if (modalState.fromManageModal) manageModal.classList.add('hidden');
+        $('modal-overlay').classList.remove('hidden');
+        $('custom-exam-modal').classList.remove('hidden');
+        $('custom-name').value = '';
+    };
+
+    window.closeCustomModal = () => {
+        $('custom-exam-modal').classList.add('hidden');
+        if (modalState.fromManageModal) { 
+            $('manage-custom-modal').classList.remove('hidden'); 
+            loadCustomExamsList(); 
+        } else {
+            $('modal-overlay').classList.add('hidden');
+        }
+        modalState.fromManageModal = false;
+        renderSheetOptions();
+        updateTriggerLabel();
+    };
+
+    window.openManageModal = () => {
+        $('modal-overlay').classList.remove('hidden');
+        $('manage-custom-modal').classList.remove('hidden');
+        loadCustomExamsList();
+        lucide?.createIcons();
+    };
+
+    window.closeManageModal = () => {
+        $('manage-custom-modal').classList.add('hidden');
+        $('modal-overlay').classList.add('hidden');
+        renderSheetOptions();
+        updateTriggerLabel();
+    };
+
+    function loadCustomExamsList() {
+        const list = $('custom-exams-list');
+        list.innerHTML = '';
+        const customKeys = Object.keys(CONFIGS).filter(k => k.startsWith('CUSTOM_'));
+        if (!customKeys.length) { 
+            list.innerHTML = '<div class="text-center py-8 text-gray-500 font-bold">No custom exams</div>'; 
+            return; 
+        }
+        customKeys.forEach(key => {
+            const cfg = CONFIGS[key];
+            const div = document.createElement('div');
+            div.className = 'custom-exam-item';
+            div.innerHTML = `<div><div class="font-bold">${cfg.name}</div><div class="text-xs">${cfg.ratio}s | ${cfg.perCorrect}/-${cfg.perWrong}</div></div><button onclick="deleteCustomExam('${key}')" class="delete-btn">Delete</button>`;
+            list.appendChild(div);
+        });
+        lucide?.createIcons();
+    }
+
+    window.deleteCustomExam = (key) => {
+        const currentSelected = window.__currentExamValue;
+        delete CONFIGS[key];
+        let custom = {};
+        Object.keys(CONFIGS).forEach(k => { if (k.startsWith('CUSTOM_')) custom[k] = CONFIGS[k]; });
+        localStorage.setItem('omr_custom_configs', JSON.stringify(custom));
+        if (currentSelected === key) {
+            window.__currentExamValue = 'MED_GST_BUP';
+            localStorage.setItem('omr_selected_exam', 'MED_GST_BUP');
+        }
+        loadCustomExamsList();
+        renderSheetOptions();
+        updateTriggerLabel();
+        updateExamPreview();
+        showToast("Deleted!");
+    };
+
+    window.saveCustomExam = () => {
+        const name = $('custom-name').value.trim(); 
+        if (!name) return showToast("Enter name!");
+        const key = 'CUSTOM_' + Date.now();
+        CONFIGS[key] = {
+            name: name,
+            ratio: parseFloat($('custom-ratio').value),
+            perCorrect: parseFloat($('custom-correct').value),
+            perWrong: parseFloat($('custom-wrong').value)
+        };
+        let custom = {};
+        Object.keys(CONFIGS).forEach(k => { if (k.startsWith('CUSTOM_')) custom[k] = CONFIGS[k]; });
+        localStorage.setItem('omr_custom_configs', JSON.stringify(custom));
+        renderSheetOptions();
+        if (modalState.fromManageModal) loadCustomExamsList();
+        closeCustomModal();
+        window.__currentExamValue = key;
+        localStorage.setItem('omr_selected_exam', key);
+        updateTriggerLabel();
+        updateExamPreview();
+        showToast("Saved!");
+    };
+
+    // App status check
+    function isEssentialLoaded() { return window.lucide && document.scripts.length > 2; }
+    
+    function checkAppStatus() {
+        const off = $('offline-screen'), main = $('main-content');
+        if (isEssentialLoaded()) { 
+            off.classList.remove('active'); 
+            main.style.display = 'block'; 
+            lucide?.createIcons(); 
+        } else { 
+            if (!navigator.onLine) { 
+                off.classList.add('active'); 
+                main.style.display = 'none'; 
+            } else { 
+                setTimeout(() => { if (!isEssentialLoaded()) window.location.reload(); }, 1500); 
+            } 
+        }
+    }
+
+    // Event listeners
+    window.addEventListener('online', checkAppStatus);
+    window.addEventListener('load', checkAppStatus);
+    setInterval(() => lucide?.createIcons(), 500);
+
+    $('q-start').addEventListener('input', updateExamPreview);
+    $('q-end').addEventListener('input', updateExamPreview);
+    $('modal-overlay').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+
+})();
+</script>
+</body>
+</html>
